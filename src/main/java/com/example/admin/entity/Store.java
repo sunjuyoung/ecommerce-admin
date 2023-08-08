@@ -25,7 +25,8 @@ public class Store {
 
     private String name;
 
-    private String userId;
+    @OneToOne
+    private User user;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
