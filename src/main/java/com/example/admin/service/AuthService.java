@@ -35,8 +35,10 @@ public class AuthService {
     }
         public AuthResponseDto login(AuthRequestDto requestDto){
         User user = userRepository.findByEmail(requestDto.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
+                .orElseThrow(() -> new IllegalArgumentException("입력하신 정보가 일치하지 않습니다, 이메일 또는 비밀번호를 확인해주세요."));
+        if(!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())){
+            throw new IllegalArgumentException("입력하신 정보가 일치하지 않습니다, 이메일 또는 비밀번호를 확인해주세요.");
+        }
         return AuthResponseDto.builder()
                 .email(user.getEmail())
                 .role(user.getRole())
