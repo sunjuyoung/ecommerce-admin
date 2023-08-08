@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Store {
 
     @Id
@@ -25,9 +24,18 @@ public class Store {
 
     private String name;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     private User user;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+
+    //domain create
+    public Store(String name, User user) {
+        this.name = name;
+        this.user = user;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
 }

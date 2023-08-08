@@ -1,5 +1,6 @@
 package com.example.admin.controller;
 
+import com.example.admin.dto.StoreCreateDto;
 import com.example.admin.service.StoreService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,7 +32,8 @@ public class StoreController {
             description = "매장을 생성합니다."
     )
     @PostMapping("/create")
-    public ResponseEntity<?> createStore(){
+    public ResponseEntity<?> createStore(StoreCreateDto storeCreateDto){
+        storeService.createStore(storeCreateDto);
         return ResponseEntity.ok().build();
     }
 
