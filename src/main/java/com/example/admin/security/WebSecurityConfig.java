@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -28,29 +30,48 @@ public class WebSecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
 
     private final JwtAuthenticationEntryPoint point;
+    private final AuthenticationProvider authenticationProvider;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+
+
+
+
         http
-                        .csrf().disable()
-                        .httpBasic().disable()
-                        .formLogin().disable()
-                        .logout().disable()
-                        .cors().configurationSource(corsConfigurationSource())
-                        .and()
-                        .sessionManagement()
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .csrf().disable()
+                .httpBasic().disable()
+                .formLogin().disable()
+                .logout().disable()
+                .cors().configurationSource(corsConfigurationSource())
                 .and()
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(ex-> ex.authenticationEntryPoint(point))
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+         ;
+
+
+        http
+                .authorizeHttpRequests()
+
+                .requestMatchers("/swagger-ui/**").permitAll()
+                .requestMatchers("/swagger-ui/index.html").permitAll()
+                .anyRequest().permitAll()
         ;
 
 
 
-        http
-                .authorizeHttpRequests((requests) -> requests
-                        .anyRequest().permitAll()
-                        //.anyRequest().authenticated()
-                );
+
+
+             http
+
+
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+
+                .exceptionHandling(ex-> ex.authenticationEntryPoint(point))
+
+                ;
+
 
         return http.build();
     }
@@ -61,6 +82,17 @@ public class WebSecurityConfig {
         return web -> web.ignoring()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                 .requestMatchers("/img/**", "/css/**", "/js/**")
+                .requestMatchers("/api/v1/auth/**",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html",
+                        "/swagger-resources/**",
+                        "/v2/api-docs",
+                        "/webjars/**",
+                        "/v3/api-docs/**",
+                        "/v3/api-docs",
+                        "/configuration/ui",
+                        "/configuration/security"
+                )
                 ;
     }
 
