@@ -54,7 +54,6 @@ public class AuthController {
             return ResponseEntity.badRequest().body(errors.getAllErrors().get(0).getDefaultMessage());
         }
         AuthResponseDto authResponseDto = authService.login(authRequestDto);
-
         return ResponseEntity.ok().body(authResponseDto);
     }
 

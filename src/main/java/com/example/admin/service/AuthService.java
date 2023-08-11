@@ -40,17 +40,17 @@ public class AuthService {
 
     }
         public AuthResponseDto login(AuthRequestDto requestDto){
+        User user = userRepository.findByEmail(requestDto.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("입력하신 정보가 일치하지 않습니다, 이메일 또는 비밀번호를 확인해주세요."));
+        if(!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())){
+            throw new IllegalArgumentException("입력하신 정보가 일치하지 않습니다, 이메일 또는 비밀번호를 확인해주세요.");
+        }
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             requestDto.getEmail(),
                             requestDto.getPassword()
                     )
             );
-        User user = userRepository.findByEmail(requestDto.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("입력하신 정보가 일치하지 않습니다, 이메일 또는 비밀번호를 확인해주세요."));
-        if(!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())){
-            throw new IllegalArgumentException("입력하신 정보가 일치하지 않습니다, 이메일 또는 비밀번호를 확인해주세요.");
-        }
 
         var jwtToken = jwtService.generateToken(new AuthUser(user));
         log.info(jwtToken);
@@ -59,6 +59,7 @@ public class AuthService {
                 .role(user.getRole().name())
                 .username(user.getUsername())
                 .token(jwtToken)
+                .id(user.getId())
                 .build();
     }
 }

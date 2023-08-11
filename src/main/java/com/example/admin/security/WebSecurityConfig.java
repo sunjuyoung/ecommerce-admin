@@ -33,18 +33,14 @@ public class WebSecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-
-
-
-
         http
                 .csrf().disable()
                 .httpBasic().disable()
                 .formLogin().disable()
                 .logout().disable()
-                .cors().configurationSource(corsConfigurationSource())
-                .and()
+                .cors(httpSecurityCorsConfigurer -> {
+                    httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource());
+                })
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
          ;
@@ -52,24 +48,16 @@ public class WebSecurityConfig {
 
         http
                 .authorizeHttpRequests()
-
+                .requestMatchers(HttpMethod.GET,"/api/v1/auth/**").permitAll()
+                .requestMatchers(HttpMethod.POST,"/api/v1/auth/**").permitAll()
                 .requestMatchers("/swagger-ui/**").permitAll()
                 .requestMatchers("/swagger-ui/index.html").permitAll()
                 .anyRequest().permitAll()
         ;
-
-
-
-
-
-             http
-
-
+        http
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-
                 .exceptionHandling(ex-> ex.authenticationEntryPoint(point))
-
                 ;
 
 
@@ -82,17 +70,6 @@ public class WebSecurityConfig {
         return web -> web.ignoring()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                 .requestMatchers("/img/**", "/css/**", "/js/**")
-                .requestMatchers("/api/v1/auth/**",
-                        "/swagger-ui/**",
-                        "/swagger-ui.html",
-                        "/swagger-resources/**",
-                        "/v2/api-docs",
-                        "/webjars/**",
-                        "/v3/api-docs/**",
-                        "/v3/api-docs",
-                        "/configuration/ui",
-                        "/configuration/security"
-                )
                 ;
     }
 
@@ -101,7 +78,7 @@ public class WebSecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type","Access-Control-Allow-Origin"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type","Access-Control-Allow-Origin","Access-Control-Allow-Headers","Origin","Accept","X-Requested-With","Access-Control-Request-Method","Access-Control-Request-Headers","Access-Control-Allow-Credentials"));
 
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
