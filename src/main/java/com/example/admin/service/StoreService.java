@@ -9,16 +9,19 @@ import com.example.admin.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
+
 @RequiredArgsConstructor
 public class StoreService {
 
     private final StoreRepository storeRepository;
     private final UserRepository userRepository;
 
-    public void createStore(StoreCreateDto storeCreateDto) {
+    @Transactional
+    public Long createStore(StoreCreateDto storeCreateDto) {
 
         User user = userRepository.findById(storeCreateDto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));
@@ -28,7 +31,8 @@ public class StoreService {
         }
 
         Store store = new Store(storeCreateDto.getName(), user);
-        storeRepository.save(store);
+        Store newStore = storeRepository.save(store);
+        return newStore.getId();
     }
 
     public StoreResponseDto getStoreById(Long id, Long userId) {

@@ -24,7 +24,7 @@ public class Store {
 
     private String name;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
     private LocalDateTime createdAt;

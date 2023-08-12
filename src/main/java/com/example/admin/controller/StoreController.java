@@ -39,13 +39,12 @@ public class StoreController {
             description = "매장을 생성합니다."
     )
     @PostMapping("/create")
-    public ResponseEntity<String> createStore(@Valid @RequestBody  StoreCreateDto storeCreateDto, Errors errors){
+    public ResponseEntity<?> createStore(@Valid @RequestBody  StoreCreateDto storeCreateDto, Errors errors){
         if(errors.hasErrors()){
             return ResponseEntity.badRequest().body(errors.getAllErrors().get(0).getDefaultMessage());
         }
-        storeService.createStore(storeCreateDto);
-        return ResponseEntity.ok().body(storeCreateDto.getName()+" 매장이 생성되었습니다.");
-
+        Long storeId = storeService.createStore(storeCreateDto);
+        return ResponseEntity.ok().body(storeId);
     }
 
     /**
@@ -54,13 +53,12 @@ public class StoreController {
      * @param userId
      * @return
      */
-    @GetMapping("/get/{id}")
+    @GetMapping(value = "/get/{id}",produces = "application/json")
     public ResponseEntity<?> getStore(@PathVariable Long id,  @RequestParam Long userId){
         if(userId == null){
             return ResponseEntity.badRequest().body("잘못된 요청입니다. 유저아이디 정보가 없습니다.");
         }
         StoreResponseDto response = storeService.getStoreById(id, userId);
-
         return ResponseEntity.ok().body(response);
     }
 
