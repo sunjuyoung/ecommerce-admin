@@ -15,6 +15,8 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -32,7 +34,7 @@ public class StoreController {
 
     /**
      * 매장 생성
-     * @return
+     * @param storeCreateDto
      */
     @Operation(
             summary = "매장 생성",
@@ -51,7 +53,6 @@ public class StoreController {
      * 매장 조회
      * @param id
      * @param userId
-     * @return
      */
     @GetMapping(value = "/get/{id}",produces = "application/json")
     public ResponseEntity<?> getStore(@PathVariable Long id,  @RequestParam Long userId){
@@ -60,6 +61,20 @@ public class StoreController {
         }
         StoreResponseDto response = storeService.getStoreById(id, userId);
         return ResponseEntity.ok().body(response);
+    }
+
+
+    /**
+     * 유저별 매장 조회
+     * @param userId
+     */
+    @GetMapping(value = "/{userId}",produces = "application/json")
+    public ResponseEntity<?> getStoresByUserId(@PathVariable Long userId){
+        if(userId == null){
+            return ResponseEntity.badRequest().body("잘못된 요청입니다. 유저아이디 정보가 없습니다.");
+        }
+        List<StoreResponseDto> storesByUserId = storeService.getStoresByUserId(userId);
+        return ResponseEntity.ok().body(storesByUserId);
     }
 
 
