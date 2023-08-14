@@ -1,5 +1,7 @@
 package com.example.admin.security;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,8 +47,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request,response);
             return;
         }
-        String jwt = authHeader.substring(7);
-        String userEmail = jwtService.extractUsername(jwt);
+
+        String jwt = null;
+        String userEmail = null;
+        try {
+             jwt = authHeader.substring(7);
+            userEmail = jwtService.extractUsername(jwt);
+        }catch (IllegalArgumentException e){
+            logger.info("JWT Token does not begin with Bearer String");
+            throw e;
+        }catch (ExpiredJwtException e){
+            logger.info("JWT Token has expired");
+            throw new TokenValidException("JWT Token has expired");
+        }catch (MalformedJwtException e){
+            logger.info("JWT Token is not valid");
+            throw new TokenValidException("JWT Token is not valid");
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
+        }
+
+
+
 
         if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);

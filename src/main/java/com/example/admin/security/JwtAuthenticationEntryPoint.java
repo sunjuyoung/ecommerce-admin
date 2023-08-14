@@ -17,6 +17,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {
 
+        System.out.println("JwtAuthenticationEntryPoint.commence() is called +===========================");
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             PrintWriter writer = response.getWriter();
             writer.println("HTTP Status 401 Access Denied - " + authException.getMessage());

@@ -28,6 +28,7 @@ import java.util.Arrays;
 public class WebSecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
+    private final ExceptionHandlerFilter exceptionHandlerFilter;
 
     private final JwtAuthenticationEntryPoint point;
     private final AuthenticationProvider authenticationProvider;
@@ -56,8 +57,10 @@ public class WebSecurityConfig {
         ;
         http
                 .authenticationProvider(authenticationProvider)
+
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(ex-> ex.authenticationEntryPoint(point))
+                .addFilterBefore(exceptionHandlerFilter,jwtAuthFilter.getClass())
+               // .exceptionHandling(ex-> ex.authenticationEntryPoint(point))
                 ;
 
 
