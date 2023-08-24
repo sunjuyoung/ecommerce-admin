@@ -17,4 +17,6 @@ public interface StoreRepository extends JpaRepository<Store,Long>, StoreReposit
 
     @EntityGraph(attributePaths = {"user"})
     Optional<Store> findByIdAndUser(Long id, User user);
+
+
 }

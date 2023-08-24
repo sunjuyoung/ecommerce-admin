@@ -15,14 +15,14 @@ import java.util.List;
 
 @Slf4j
 @Service
-
+@Transactional
 @RequiredArgsConstructor
 public class StoreService {
 
     private final StoreRepository storeRepository;
     private final UserRepository userRepository;
 
-    @Transactional
+
     public Long createStore(StoreCreateDto storeCreateDto) {
 
         User user = userRepository.findById(storeCreateDto.getUserId())
@@ -42,10 +42,16 @@ public class StoreService {
     }
 
     public  List<StoreResponseDto> getStoresByUserId(Long userId) {
-        if(userRepository.existsById(userId)){
+        if(!userRepository.existsUserById(userId)){
             throw new IllegalArgumentException("해당 유저가 없습니다.");
         }
         List<StoreResponseDto> dtoList = storeRepository.findAllByUser(userId);
         return dtoList;
+    }
+
+    public Long updateStoreById(Long id,  StoreCreateDto storeCreateDto) {
+        Store store = storeRepository.findById(id).get();
+        store.updateName(storeCreateDto.getName());
+        return store.getId();
     }
 }

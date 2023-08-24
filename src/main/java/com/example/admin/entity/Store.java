@@ -38,4 +38,9 @@ public class Store {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
+
+    public void updateName(String name) {
+        this.name = name;
+        this.updatedAt = LocalDateTime.now();
+    }
 }

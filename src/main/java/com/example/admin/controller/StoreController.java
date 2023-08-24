@@ -77,5 +77,21 @@ public class StoreController {
         return ResponseEntity.ok().body(storesByUserId);
     }
 
+    /**
+     * 매장 수정
+     * @param id
+     * @param storeCreateDto
+     * @return
+     */
+    @PatchMapping(value = "/{id}",produces = "application/json")
+    public ResponseEntity<?> updateStoreById(@PathVariable Long id,
+                                              @Valid @RequestBody StoreCreateDto storeCreateDto, Errors errors){
+        if(errors.hasErrors()){
+            return ResponseEntity.badRequest().body(errors.getAllErrors().get(0).getDefaultMessage());
+        }
+        Long storeId = storeService.updateStoreById(id, storeCreateDto);
+        return ResponseEntity.ok().body(storeId);
+    }
+
 
 }

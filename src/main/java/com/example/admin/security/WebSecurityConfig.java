@@ -57,13 +57,10 @@ public class WebSecurityConfig {
         ;
         http
                 .authenticationProvider(authenticationProvider)
-
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(exceptionHandlerFilter,jwtAuthFilter.getClass())
                // .exceptionHandling(ex-> ex.authenticationEntryPoint(point))
                 ;
-
-
         return http.build();
     }
 
