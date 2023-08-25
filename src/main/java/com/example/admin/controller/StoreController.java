@@ -69,9 +69,6 @@ public class StoreController {
      */
     @GetMapping(value = "/{userId}",produces = "application/json")
     public ResponseEntity<?> getStoresByUserId(@PathVariable Long userId){
-        if(userId == null){
-            return ResponseEntity.badRequest().body("잘못된 요청입니다. 유저아이디 정보가 없습니다.");
-        }
         List<StoreResponseDto> storesByUserId = storeService.getStoresByUserId(userId);
         return ResponseEntity.ok().body(storesByUserId);
     }
@@ -80,7 +77,6 @@ public class StoreController {
      * 매장 수정
      * @param id
      * @param storeCreateDto
-     * @return
      */
     @PatchMapping(value = "/{id}",produces = "application/json")
     public ResponseEntity<?> updateStoreById(@PathVariable Long id,
@@ -90,6 +86,12 @@ public class StoreController {
         }
         Long storeId = storeService.updateStoreById(id, storeCreateDto);
         return ResponseEntity.ok().body(storeId);
+    }
+
+    @DeleteMapping(value = "/{id}/{userId}",produces = "application/json")
+    public ResponseEntity<?> deleteStoreById(@PathVariable Long id, @PathVariable Long userId){
+        storeService.deleteStoreById(id, userId);
+        return ResponseEntity.ok().body(id);
     }
 
 

@@ -25,8 +25,7 @@ public class StoreService {
 
     public Long createStore(StoreCreateDto storeCreateDto) {
 
-        User user = userRepository.findById(storeCreateDto.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));
+        User user = getUser(storeCreateDto.getUserId());
 
         Store store = new Store(storeCreateDto.getName(), user);
         Store newStore = storeRepository.save(store);
@@ -34,8 +33,7 @@ public class StoreService {
     }
 
     public StoreResponseDto getStoreById(Long id, Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));
+        User user = getUser(userId);
         Store store = storeRepository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new IllegalArgumentException("해당 매장이 없습니다."));
         return new StoreResponseDto(store);
@@ -53,5 +51,17 @@ public class StoreService {
         Store store = storeRepository.findById(id).get();
         store.updateName(storeCreateDto.getName());
         return store.getId();
+    }
+
+    public void deleteStoreById(Long id, Long userId) {
+        User user = getUser(userId);
+        Store store = storeRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new IllegalArgumentException("해당 매장이 없습니다."));
+        storeRepository.delete(store);
+    }
+
+    private User getUser(Long userId) {
+        return  userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));
     }
 }
