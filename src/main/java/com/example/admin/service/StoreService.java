@@ -42,7 +42,7 @@ public class StoreService {
     }
 
     public  List<StoreResponseDto> getStoresByUserId(Long userId) {
-        if(userRepository.existsById(userId)){
+        if(!userRepository.existsById(userId)){
             throw new IllegalArgumentException("해당 유저가 없습니다.");
         }
         List<StoreResponseDto> dtoList = storeRepository.findAllByUser(userId);

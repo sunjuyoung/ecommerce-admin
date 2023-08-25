@@ -29,8 +29,11 @@ public class StoreRepositoryExtensionImpl extends QuerydslRepositorySupport impl
                                 store.createdAt,
                                 store.updatedAt,
                                 user.id.as("userId")
+
                         )
                 ).fetch();
+
+
         return result;
     }
 }
