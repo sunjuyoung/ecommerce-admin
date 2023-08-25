@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
@@ -75,6 +74,22 @@ public class StoreController {
         }
         List<StoreResponseDto> storesByUserId = storeService.getStoresByUserId(userId);
         return ResponseEntity.ok().body(storesByUserId);
+    }
+
+    /**
+     * 매장 수정
+     * @param id
+     * @param storeCreateDto
+     * @return
+     */
+    @PatchMapping(value = "/{id}",produces = "application/json")
+    public ResponseEntity<?> updateStoreById(@PathVariable Long id,
+                                              @Valid @RequestBody StoreCreateDto storeCreateDto, Errors errors){
+        if(errors.hasErrors()){
+            return ResponseEntity.badRequest().body(errors.getAllErrors().get(0).getDefaultMessage());
+        }
+        Long storeId = storeService.updateStoreById(id, storeCreateDto);
+        return ResponseEntity.ok().body(storeId);
     }
 
 
